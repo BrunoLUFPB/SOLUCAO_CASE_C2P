@@ -12,6 +12,18 @@ const COLOR_MAP = {
   'ENGIC3': '#800080'     // Roxo
 };
 
+// Validação do Workbook
+const validateWorkbook = (workbook) => {
+  const requiredSheets = ['LineChart', 'ScatterPoints', 'BoxPlots'];
+  const missingSheets = requiredSheets.filter(
+    sheet => !workbook.SheetNames.includes(sheet)
+  );
+
+  if (missingSheets.length > 0) {
+    throw new Error(`Planilhas obrigatórias faltando: ${missingSheets.join(', ')}`);
+  }
+};
+
 // Trace Creators (Strategy Pattern)
 const createLineTraces = (lineData) => {
   return [
@@ -71,6 +83,8 @@ const createBoxTraces = (boxData) => {
 
 // Data Processor
 const processExcelData = (workbook) => {
+  validateWorkbook(workbook); // Validação adicionada aqui
+
   const lineData = XLSX.utils.sheet_to_json(workbook.Sheets['LineChart'], { header: 1 })
     .slice(1)
     .map(row => ({
@@ -88,21 +102,36 @@ const processExcelData = (workbook) => {
 // Main Component
 const ChartComponent = () => {
   const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleFileUpload = (file) => {
+    setError(null); // Reseta o erro ao tentar novo upload
+    
     const reader = new FileReader();
+    
     reader.onload = (e) => {
-      const workbook = XLSX.read(e.target.result, { type: 'array' });
-      const { lineData, scatterData, boxData } = processExcelData(workbook);
-      
-      const traces = [
-        ...createLineTraces(lineData),
-        ...createScatterTraces(scatterData),
-        ...createBoxTraces(boxData)
-      ];
-      
-      setData(traces);
+      try {
+        const workbook = XLSX.read(e.target.result, { type: 'array' });
+        const { lineData, scatterData, boxData } = processExcelData(workbook);
+        
+        const traces = [
+          ...createLineTraces(lineData),
+          ...createScatterTraces(scatterData),
+          ...createBoxTraces(boxData)
+        ];
+        
+        setData(traces);
+      } catch (error) {
+        console.error('Erro ao processar arquivo:', error);
+        setError(error.message);
+        setData([]);
+      }
     };
+
+    reader.onerror = () => {
+      setError('Erro ao ler o arquivo. Tente novamente.');
+    };
+
     reader.readAsArrayBuffer(file);
   };
 
@@ -114,6 +143,12 @@ const ChartComponent = () => {
         onChange={(e) => handleFileUpload(e.target.files[0])}
         style={{ marginBottom: '20px' }}
       />
+      
+      {error && (
+        <div style={{ color: 'red', marginBottom: '20px' }}>
+          {error}
+        </div>
+      )}
       
       <CustomPlot data={data} />
     </div>
