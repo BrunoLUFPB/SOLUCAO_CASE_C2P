@@ -1,5 +1,5 @@
 
-```markdown
+
 # 📊 Case C2P - Análise de Dados com React + Plotly + Node
 
 Este projeto foi desenvolvido como parte de um case técnico para uma vaga de estágio **Full Stack**. A proposta consistia em construir uma aplicação que **exibe visualizações gráficas** baseadas em dados fornecidos via planilha Excel, utilizando tecnologias como **React**, **Plotly.js** e **Node.js**.
@@ -20,7 +20,7 @@ Este projeto foi desenvolvido como parte de um case técnico para uma vaga de es
 
 1. **Clone o repositório**
 ```bash
-git clone https://github.com/seuusuario/CASE_C2P.git
+git clone https://github.com/seuusuario/SOLUCAO_CASE_C2P.git
 cd CASE_C2P
 ```
 
