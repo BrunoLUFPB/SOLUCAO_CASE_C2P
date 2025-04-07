@@ -1,4 +1,4 @@
-// src/constants/plotConstants.js
+// Classe pronta para ser utilizada em tratamentos futuros
 export const PLOT_CONSTANTS = {
     LAYOUT: {
       TITLE: 'Análise Combinada - Case C2P',

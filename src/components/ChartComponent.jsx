@@ -31,7 +31,7 @@ const createLineTraces = (lineData) => {
     {
       x: lineData.map(item => item['Duration Anos']),
       y: lineData.map(item => item['Corporate DI']),
-      mode: 'lines+markers',
+      mode: 'lines',
       name: 'Corporate DI',
       line: { color: '#1f77b4', width: 2 },
       marker: { size: 8 }
@@ -39,7 +39,7 @@ const createLineTraces = (lineData) => {
     {
       x: lineData.map(item => item['Duration Anos']),
       y: lineData.map(item => item['Engie Brasil']),
-      mode: 'lines+markers',
+      mode: 'lines',
       name: 'Engie Brasil',
       line: { color: '#ff7f0e', width: 2 },
       marker: { size: 8 }
@@ -71,7 +71,7 @@ const createBoxTraces = (boxData) => {
 
     const values = box.y
       .replace(/[[\]']/g, '')
-      .split(',') 
+      .split(',')
       .map(Number);
 
     if (values.some(isNaN)) {
@@ -80,14 +80,24 @@ const createBoxTraces = (boxData) => {
     }
 
     return {
-      x: [box.x],
+      x: Array(values.length).fill(box.x),
       y: values,
       type: 'box',
       name: box.name,
-      boxpoints: 'all',
-      jitter: 0.3,
+      boxpoints: 'outliers',
+      pointpos: 0,
+      jitter: 0,
       fillcolor: COLOR_MAP[box.name],
-      line: { color: COLOR_MAP[box.name] }
+      marker: {
+        size: 3,
+        color: 'black',
+        symbol: 'circle'
+      },
+      line: {
+        color: 'black',
+        width: 2.5 
+      },
+      width: 0.2
     };
   }).filter(Boolean);
 };
@@ -172,6 +182,7 @@ ChartComponent.propTypes = {
 };
 
 // Validação da estrutura de dados
+// Método para uso provável futuro de tratamento de dados (código mais escalável)
 const tracePropTypes = PropTypes.shape({
   x: PropTypes.arrayOf(
     PropTypes.oneOfType([
