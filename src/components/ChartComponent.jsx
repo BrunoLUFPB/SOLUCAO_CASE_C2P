@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import CustomPlot from './CustomPlot';
 import * as XLSX from 'xlsx';
 import { PLOT_CONSTANTS } from '../constants/plotConstants';
@@ -63,10 +64,20 @@ const createScatterTraces = (scatterData) => {
 
 const createBoxTraces = (boxData) => {
   return boxData.map(box => {
+    if (typeof box.y !== 'string') {
+      console.error('box.y deve ser uma string contendo array', box);
+      return null;
+    }
+
     const values = box.y
       .replace(/[[\]']/g, '')
       .split(',') 
       .map(Number);
+
+    if (values.some(isNaN)) {
+      console.error('Valores inválidos em box.y', box.y);
+      return null;
+    }
 
     return {
       x: [box.x],
@@ -78,12 +89,12 @@ const createBoxTraces = (boxData) => {
       fillcolor: COLOR_MAP[box.name],
       line: { color: COLOR_MAP[box.name] }
     };
-  });
+  }).filter(Boolean);
 };
 
 // Data Processor
 const processExcelData = (workbook) => {
-  validateWorkbook(workbook); // Validação adicionada aqui
+  validateWorkbook(workbook);
 
   const lineData = XLSX.utils.sheet_to_json(workbook.Sheets['LineChart'], { header: 1 })
     .slice(1)
@@ -105,7 +116,7 @@ const ChartComponent = () => {
   const [error, setError] = useState(null);
 
   const handleFileUpload = (file) => {
-    setError(null); // Reseta o erro ao tentar novo upload
+    setError(null);
     
     const reader = new FileReader();
     
@@ -118,7 +129,7 @@ const ChartComponent = () => {
           ...createLineTraces(lineData),
           ...createScatterTraces(scatterData),
           ...createBoxTraces(boxData)
-        ];
+        ].filter(Boolean);
         
         setData(traces);
       } catch (error) {
@@ -154,5 +165,37 @@ const ChartComponent = () => {
     </div>
   );
 };
+
+// Definição dos PropTypes
+ChartComponent.propTypes = {
+  // Campo vazio destinado a receber props no futuro
+};
+
+// Validação da estrutura de dados
+const tracePropTypes = PropTypes.shape({
+  x: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ])
+  ).isRequired,
+  y: PropTypes.arrayOf(PropTypes.number).isRequired,
+  mode: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  type: PropTypes.string,
+  marker: PropTypes.shape({
+    symbol: PropTypes.string,
+    size: PropTypes.number,
+    color: PropTypes.string,
+    line: PropTypes.shape({
+      width: PropTypes.number,
+      color: PropTypes.string
+    })
+  }),
+  line: PropTypes.shape({
+    color: PropTypes.string,
+    width: PropTypes.number
+  })
+});
 
 export default ChartComponent;
