@@ -1,12 +1,12 @@
+---
 
+# 📊 **Case C2P - Análise de Dados com React + Plotly + Node**
 
-# 📊 Case C2P - Análise de Dados com React + Plotly + Node
-
-Este projeto foi desenvolvido como parte de um case técnico para uma vaga de estágio **Full Stack**. A proposta consistia em construir uma aplicação que **exibe visualizações gráficas** baseadas em dados fornecidos via planilha Excel, utilizando tecnologias como **React**, **Plotly.js** e **Node.js**.
+Este projeto foi desenvolvido como parte de um **case técnico para uma vaga de estágio Full Stack**. A proposta consistia em construir uma aplicação que **exibe visualizações gráficas** baseadas em dados fornecidos via planilha Excel, utilizando **React**, **Plotly.js**, **Node.js**, e **Excel Processing** no frontend.
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 🚀 **Tecnologias Utilizadas**
 
 - 🧠 **React.js** — Frontend SPA moderno
 - 📈 **Plotly.js** — Biblioteca para gráficos interativos
@@ -16,173 +16,160 @@ Este projeto foi desenvolvido como parte de um case técnico para uma vaga de es
 
 ---
 
-## 💻 Como rodar o projeto localmente
+## 💻 **Como rodar o projeto localmente**
 
 1. **Clone o repositório**
+
 ```bash
-git clone https://github.com/seuusuario/SOLUCAO_CASE_C2P.git
+git clone <https://github.com/seuusuario/SOLUCAO_CASE_C2P.git>
 cd CASE_C2P
 ```
 
 2. **Instale as dependências**
+
 ```bash
 npm install
 ```
 
 3. **Inicie o frontend**
+
 ```bash
 npm start
 ```
 
-4. Acesse http://localhost:3000 no navegador 🚀
+4. Acesse [http://localhost:3000](http://localhost:3000/) no navegador 🚀
 
 ---
 
-## 🧠 Como funciona
+## 🧠 **Como funciona**
 
 A aplicação permite que o usuário **importe um arquivo .xlsx** com dados em três abas distintas:
 
-- **LineChart**: Geração de gráfico de linhas.
-- **ScatterPoints**: Pontos individuais sobrepostos ao gráfico.
-- **BoxPlots**: Visualização de distribuição com boxplots.
+- **LineChart**: Geração de gráfico de linhas com dados temporais
+- **ScatterPoints**: Exibe pontos individuais sobrepostos ao gráfico
+- **BoxPlots**: Visualização de distribuição com boxplots
 
-Esses dados são lidos e tratados no frontend usando a biblioteca xlsx, e então renderizados usando o react-plotly.js.
-
----
-
-## 📁 Estrutura do Projeto
-
-```
-CASE_C2P-main/
-├── .gitignore              # Arquivos e pastas ignorados pelo Git
-├── README.md               # Documentação principal do projeto
-├── package-lock.json       # Registro de dependências exatas instaladas
-├── package.json            # Configurações do projeto e lista de dependências
-├── public/                 # Arquivos públicos estáticos
-│   ├── favicon.ico         # Ícone da aba do navegador
-│   ├── index.html          # HTML base da aplicação React
-│   ├── logo192.png         # Logotipo usado para ícones de app
-│   ├── logo512.png         # Logotipo em alta resolução
-│   ├── manifest.json       # Configurações do PWA (Progressive Web App)
-│   └── robots.txt          # Instruções para rastreadores de mecanismos de busca
-└── src/                    # Código-fonte da aplicação
-    ├── App.css             # Estilização principal do App
-    ├── App.js              # Componente principal da aplicação React
-    ├── App.test.js         # Testes para o componente App
-    ├── index.css           # Estilos globais
-    ├── index.js            # Ponto de entrada da aplicação
-    ├── logo.svg            # Logotipo usado na aplicação
-    ├── reportWebVitals.js  # Medição de performance da aplicação
-    ├── setupTests.js       # Configuração para testes com Jest
-    └── components/         # Componentes reutilizáveis da aplicação
-        └── ChartComponent.jsx  # Componente de gráfico 
-```
+Esses dados são lidos e tratados no frontend usando a biblioteca **SheetJS (XLSX)**, e então renderizados usando o **react-plotly.js**.
 
 ---
 
-## 🧩 Componentes e Lógica - Explicação Detalhada
+## 📁 **Estrutura do Projeto**
 
-### `ChartComponent.jsx` - O Coração da Visualização
-
-#### **1. Estrutura Básica**
-```javascript
-import React, { useState } from 'react';
-import Plot from 'react-plotly.js';
-import * as XLSX from 'xlsx';
 ```
-- **React Hooks**: Utiliza `useState` para gerenciar o estado dos dados
-- **Plotly.js**: Renderiza gráficos interativos
-- **SheetJS (xlsx)**: Processamento de arquivos Excel no navegador
-
-#### **2. Mapeamento de Cores**
-```javascript
-const COLOR_MAP = {
-    'ENGIA0': '#FF0000',    // Vermelho
-    'ENGIA1': '#00FF00',    // Verde
-    'ENGIA2': '#0000FF',    // Azul
-    'ENGIB2': '#FFA500',    // Laranja
-    'ENGIC3': '#800080'     // Roxo
-};
+SOLUCAO_CASE_C2P-main/
+├── .gitignore
+├── README.md
+├── package-lock.json
+├── package.json
+├── public/
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+└── src/
+    ├── App.css
+    ├── App.js
+    ├── App.test.js
+    ├── index.css
+    ├── index.js
+    ├── logo.svg
+    ├── reportWebVitals.js
+    ├── setupTests.js
+    ├── components/
+    │   ├── ChartComponent.jsx     # Componente principal de visualização
+    │   └── CustomPlot.js          # Componente de plotagem customizada (abstração do Plotly)
+    ├── constants/
+    │   ├── colors.js              # Mapeamento de cores por categoria
+    │   └── plotConstants.js       # Constantes globais para os gráficos
+    ├── styles/
+    │   └── plotStyles.js          # Estilos reutilizáveis para gráficos
+    └── utils/
+        ├── processExcel.js        # Função principal de tratamento dos dados Excel
+        ├── traceCreators.js       # Criação dos traces (Line, Scatter, Box)
+        └── validateWorkbook.js    # Validação e tratamento de erros do Excel
 ```
-- Garante consistência visual entre diferentes tipos de gráficos
 
-#### **3. Fluxo de Processamento**
-1. **Upload do Arquivo**:
-   - Usuário seleciona arquivo XLSX
-   - Dispara `processExcel()`
+---
 
-2. **Leitura do Excel**:
-   ```javascript
-   const workbook = XLSX.read(e.target.result, { type: 'array' });
-   const lineData = XLSX.utils.sheet_to_json(workbook.Sheets['LineChart']);
-   // ... outras abas
-   ```
+## 🧩 **Componentes e Lógica - Explicação Detalhada**
 
-3. **Formatação dos Dados**:
-   - Cria traces para Plotly com:
-     - Gráficos de linha (tendências temporais)
-     - Pontos de dispersão (valores específicos)
-     - Boxplots (distribuições)
+### **`ChartComponent.jsx` - O Coração da Visualização**
 
-4. **Renderização**:
-   ```javascript
-   <Plot
-     data={data}
-     layout={/* configurações detalhadas */}
-   />
-   ```
+O **`ChartComponent.jsx`** é responsável por:
 
-#### **4. Recursos Avançados**
-- **Combinação de múltiplos tipos de gráfico** em um único canvas
-- **Controle preciso de eixos**:
-  ```javascript
-  xaxis: {
-    tickvals: [0,1,2,3,4,5,6,7,8,9,10],
-    range: [-0.5, 10.5]
-  }
-  ```
-- **Processamento de arrays** nos boxplots:
-  ```javascript
-  const values = box.y.replace(/[[\]']/g, '').split(',').map(Number);
-  ```
+1. **Carregar o arquivo Excel** através de `FileReader`.
+2. **Validar o formato do arquivo** para garantir que ele contenha as abas necessárias.
+3. **Processar os dados** utilizando a função `processExcelData`, que separa os dados de cada aba e retorna o formato adequado para Plotly.
+4. **Renderizar os gráficos interativos** utilizando `Plotly.js` e o componente `<Plot />`.
 
-#### **5. Diagrama de Fluxo**
+#### **Fluxo de Processamento**:
+
+1. **Upload do Arquivo**: O arquivo `.xlsx` ou `.xls` é carregado pelo usuário.
+2. **Leitura e Validação**: O arquivo é lido com `SheetJS` e validado pela função `validateWorkbook()`.
+3. **Processamento dos Dados**: Os dados das abas `LineChart`, `ScatterPoints`, e `BoxPlots` são extraídos e convertidos para o formato adequado.
+4. **Geração de Traces**: Traces são gerados para os tipos de gráfico `line`, `scatter` e `box` através das funções `createLineTraces`, `createScatterTraces` e `createBoxTraces`.
+5. **Renderização**: O gráfico é renderizado na tela usando o componente `CustomPlot`, que integra o `Plotly.js`.
+
+**Observação**: Para o código completo, acesse o arquivo `ChartComponent.jsx` na pasta `src/components/`.
+
+---
+
+### ⚡ **Recursos Avançados Utilizados**
+- **Leitura e Validação de Arquivos Excel**: Utilizando a biblioteca `SheetJS` para leitura e validação de abas e colunas.
+- **Processamento Dinâmico de Dados**: A função `processExcelData` garante que os dados sejam lidos de maneira flexível e que os gráficos sejam renderizados corretamente.
+- **Exportação de Gráficos**: Funcionalidade para exportar os gráficos interativos para arquivos de imagem (JPEG).
+- **Customização de Gráficos**: Utilização de um `CustomPlot` para encapsular a renderização do gráfico, permitindo maior controle sobre o layout, estilos e interatividade.
+
+---
+
+### 🌐 **Diagrama de Fluxo**
+
 ```
-[Arquivo XLSX] → [Leitura com SheetJS] → 
+[Arquivo XLSX] → [Leitura com SheetJS] →
     ↓
-[Separação por Abas] → [Conversão para JSON] → 
+[Validação de Abas e Colunas] → [Conversão para JSON] →
     ↓
-[Formatação para Plotly] → [Renderização Gráfica]
+[Criação de Traces] → [Renderização no Plotly] → [Exibição do Gráfico Interativo]
 ```
 
 ---
 
-## 🎯 Diferenciais do Projeto
+### 🏆 **Diferenciais do Projeto**
 
-- ✅ Upload e processamento de Excel 100% client-side
-- ✅ Combinação de 3 tipos de visualização em um gráfico
-- ✅ Interatividade nativa (zoom, tooltips, toggle legendas)
-- ✅ Sistema de cores consistentes por categoria
-- ✅ Controle preciso de ranges e ticks dos eixos
+- ✅ **Upload e processamento de Excel 100% client-side**: Sem necessidade de backend.
+- ✅ **Combinação de múltiplos tipos de visualização**: Gráficos de linha, dispersão e boxplot no mesmo gráfico.
+- ✅ **Interatividade nativa**: Zoom, tooltips e toggle de legendas.
+- ✅ **Sistema de cores consistente** por categoria, melhorando a legibilidade e compreensão dos dados.
+- ✅ **Exportação de gráficos** para JPEG, proporcionando flexibilidade ao usuário.
+- ✅ **Validação robusta de arquivos e dados**, garantindo dados de entrada corretos e mensagens de erro informativas:
+  1. **Validação de Arquivo**: Verifica se o arquivo é do tipo `.xlsx` ou `.xls`. Caso contrário, exibe uma mensagem de erro informativa.
+  2. **Validação de Abas**: Verifica se o arquivo Excel contém as abas necessárias: `LineChart`, `ScatterPoints`, e `BoxPlots`.
+  3. **Validação de Colunas**:
+     - **LineChart**: Verifica se as colunas `Duration Anos`, `Corporate DI`, e `Engie Brasil` estão presentes.
+     - **ScatterPoints**: Verifica se as colunas `x`, `y`, e `name` estão presentes.
+     - **BoxPlots**: Verifica se as colunas `x`, `y`, e `name` estão presentes.
+  4. **Tratamento de Dados**:
+     - **LineChart**: Os dados são extraídos e mapeados corretamente para o formato de gráficos de linha.
+     - **ScatterPoints**: Filtragem de pontos com valores válidos para `x` e `y`.
+     - **BoxPlots**: Tratamento de valores de distribuição (strings para arrays de números).
+  5. **Erros Informativos**: Caso alguma aba ou coluna esteja faltando, a aplicação exibe uma mensagem clara de erro, ajudando o usuário a corrigir rapidamente.
+  6. **Feedback Visual**: Mensagens de erro e aviso são exibidas de forma destacada, melhorando a experiência do usuário.
 
 ---
 
-## 🔧 Possíveis Melhorias Futuras
+### **👨‍💻 Autor**
 
-- [ ] Adicionar validação do formato do arquivo Excel
-- [ ] Implementar responsividade para mobile
-- [ ] Adicionar opções de exportação (imagem/PDF)
-
----
-
-## 👨‍💻 Autor
-
-Desenvolvido com 💙 por Bruno Luís Silva Guedes  
+Desenvolvido com 💙 por **Bruno Luís Silva Guedes**  
 🔗 [LinkedIn](https://www.linkedin.com/in/bruno-luis-8a730b220/)
 
 ---
 
-## 📝 Licença
+### **📝 Licença**
 
 Este projeto está sob a licença MIT.
-```
+
+---
+
+
