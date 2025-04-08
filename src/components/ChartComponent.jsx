@@ -4,18 +4,38 @@ import CustomPlot from './CustomPlot';
 import * as XLSX from 'xlsx';
 import Plotly from 'plotly.js-dist-min';
 import { processExcelData } from '../utils/processExcel';
-import {createLineTraces,createScatterTraces,createBoxTraces} from '../utils/traceCreators';
+import { createLineTraces, createScatterTraces, createBoxTraces } from '../utils/traceCreators';
+import { chartComponentStyles } from '../styles/plotStyles';
 
+/**
+ * Componente principal para visualização e exportação de gráficos a partir de dados Excel.
+ * Suporta múltiplos tipos de gráficos (linha, dispersão e boxplot) em um único plot.
+ */
 const ChartComponent = () => {
+  // Estado para armazenar os dados processados dos gráficos
   const [data, setData] = useState([]);
+  // Estado para tratamento de erros durante o processamento
   const [error, setError] = useState(null);
+  // Refs para manipulação direta do componente Plotly
   const plotRef = useRef(null);
   const plotInstanceRef = useRef(null);
 
+  /**
+   * Manipula o upload do arquivo Excel, processando seus dados e gerando os gráficos correspondentes.
+   * @param {File} file - Arquivo Excel contendo as abas com dados para os gráficos
+   */
   const handleFileUpload = (file) => {
+    // Reset do estado quando não há arquivo (usuário cancelou)
+    if (!file) {
+      setError(null); 
+      return;
+    }
+
+    // Reset dos estados antes do novo processamento
     setError(null);
     setData([]);
 
+    // Validação do tipo de arquivo
     const fileExtension = file.name.split('.').pop().toLowerCase();
     if (fileExtension !== 'xlsx' && fileExtension !== 'xls') {
       setError('O arquivo selecionado não é um Excel válido com múltiplas abas.');
@@ -24,16 +44,21 @@ const ChartComponent = () => {
 
     const reader = new FileReader();
 
+    // Callback assíncrono para quando a leitura do arquivo estiver completa
     reader.onload = (e) => {
       try {
+        // Processamento do workbook Excel
         const workbook = XLSX.read(e.target.result, { type: 'array' });
+        
+        // Extração e transformação dos dados de cada aba
         const { lineData, scatterData, boxData } = processExcelData(workbook);
 
+        // Criação dos traces para cada tipo de gráfico
         const traces = [
           ...createLineTraces(lineData),
           ...createScatterTraces(scatterData),
           ...createBoxTraces(boxData)
-        ].filter(Boolean);
+        ].filter(Boolean); // Filtro para remover traces inválidos
 
         setData(traces);
       } catch (error) {
@@ -46,11 +71,14 @@ const ChartComponent = () => {
     reader.readAsArrayBuffer(file);
   };
 
+  /**
+   * Exporta o gráfico atual como imagem JPEG
+   */
   const exportJPEG = () => {
-    const plotElement = plotInstanceRef.current;
-    if (!plotElement) return;
+    if (!plotInstanceRef.current) return;
 
-    Plotly.downloadImage(plotElement, {
+    // Utiliza a API do Plotly para gerar e baixar a imagem
+    Plotly.downloadImage(plotInstanceRef.current, {
       format: 'jpeg',
       filename: 'grafico_exportado',
       width: 1200,
@@ -59,49 +87,37 @@ const ChartComponent = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+    <div style={chartComponentStyles.mainContainer}>
+      {/* Controles de upload e exportação */}
+      <div style={chartComponentStyles.uploadContainer}>
         <input
           type="file"
           accept=".xlsx,.xls"
-          onChange={(e) => handleFileUpload(e.target.files[0])}
+          onChange={(e) => handleFileUpload(e.target.files?.[0])}
         />
 
         <button
           onClick={exportJPEG}
-          style={{
-            backgroundColor: '#007BFF',
-            color: '#fff',
-            border: 'none',
-            padding: '8px 12px',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
+          style={chartComponentStyles.exportButton}
+          disabled={!data.length} // Botão só habilitado quando há dados
         >
           Exportar JPEG
         </button>
       </div>
 
-      <div
-        style={{
-          fontSize: '0.9rem',
-          color: '#856404',
-          backgroundColor: '#fff3cd',
-          padding: '8px',
-          borderRadius: '4px',
-          marginBottom: '15px',
-          border: '1px solid #ffeeba'
-        }}
-      >
+      {/* Mensagem informativa sobre os requisitos do arquivo */}
+      <div style={chartComponentStyles.alertMessage}>
         Apenas arquivos <strong>.xlsx</strong> ou <strong>.xls</strong> (contendo as abas <em>LineChart</em>, <em>ScatterPoints</em> e <em>BoxPlots</em>), pois é o único tipo de Excel válido com múltiplas abas.
       </div>
 
+      {/* Exibição de erros durante o processamento */}
       {error && (
-        <div style={{ color: '#dc3545', marginBottom: '15px', fontWeight: 'bold' }}>
+        <div style={chartComponentStyles.errorMessage}>
           {error}
         </div>
       )}
 
+      {/* Componente de gráfico customizado */}
       <CustomPlot
         data={data}
         plotRef={plotRef}
@@ -113,6 +129,7 @@ const ChartComponent = () => {
   );
 };
 
+// PropTypes podem ser adicionadas conforme a evolução do componente
 ChartComponent.propTypes = {
   // Props podem ser adicionadas aqui quando necessário
 };

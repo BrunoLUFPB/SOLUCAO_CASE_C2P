@@ -1,12 +1,18 @@
 import * as XLSX from 'xlsx';
 import { validateWorkbook } from './validateWorkbook';
 
+/**
+ * Processa arquivo Excel e extrai dados estruturados para visualização
+ * @param {Object} workbook - Objeto workbook do Excel (xlsx)
+ * @returns {Object} Dados formatados para diferentes visualizações
+ */
 export const processExcelData = (workbook) => {
-  validateWorkbook(workbook);
+  validateWorkbook(workbook); // Valida estrutura mínima do arquivo
 
-  // LINE CHART
+  // Processa dados para gráfico de linhas
   const lineSheet = XLSX.utils.sheet_to_json(workbook.Sheets['LineChart'], { header: 1 });
   const lineHeaders = lineSheet[0];
+  // Mapeia índices das colunas para acesso dinâmico
   const durationIndex = lineHeaders.indexOf('Duration Anos');
   const corporateIndex = lineHeaders.indexOf('Corporate DI');
   const engieIndex = lineHeaders.indexOf('Engie Brasil');
@@ -17,12 +23,9 @@ export const processExcelData = (workbook) => {
     'Engie Brasil': row[engieIndex]
   }));
 
-  // SCATTER CHART
+  // Extrai dados brutos para outros gráficos (scatter e boxplot)
   const scatterData = XLSX.utils.sheet_to_json(workbook.Sheets['ScatterPoints'], { defval: null });
-
-  // BOX CHART
   const boxData = XLSX.utils.sheet_to_json(workbook.Sheets['BoxPlots'], { defval: null });
 
   return { lineData, scatterData, boxData };
 };
-
