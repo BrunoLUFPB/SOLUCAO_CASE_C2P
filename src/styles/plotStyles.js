@@ -1,4 +1,3 @@
-// src/styles/plotStyles.js
 export const plotContainerStyles = {
     base: {
       position: 'relative',
@@ -30,7 +29,7 @@ export const plotContainerStyles = {
     borderRadius: '4px'
   };
   
-  // Estilos para o modo dark (opcional)
+
   export const darkModeStyles = {
     plot_bgcolor: '#1e1e1e',
     paper_bgcolor: '#2d2d2d',

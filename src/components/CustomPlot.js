@@ -1,36 +1,38 @@
-// src/components/CustomPlot.js
 import React from 'react';
 import Plot from 'react-plotly.js';
-import { PLOT_CONSTANTS } from '../constants/plotConstants';
+import { PLOT_CONSTANTS, PLOT_STYLE } from '../constants/plotConstants';
 
-// Estilos mínimos necessários (sem arquivo separado)
 const plotStyles = {
   container: {
     margin: '20px 0',
     position: 'relative'
   },
-  plot: {
-    width: '100%',
-    height: '700px'
-  }
+  plot: PLOT_STYLE
 };
 
-const CustomPlot = ({ data }) => {
+const CustomPlot = ({ data, plotRef, onInitialized }) => {
   return (
     <div style={plotStyles.container}>
       <Plot
+        ref={plotRef}
         data={data}
         layout={{
           title: PLOT_CONSTANTS.LAYOUT.TITLE,
           showlegend: true,
           xaxis: {
-            title: PLOT_CONSTANTS.AXES.X.TITLE,
+            title: {
+              text: PLOT_CONSTANTS.AXES.X.TITLE,
+              font: PLOT_CONSTANTS.AXES.X.TITLE_FONT
+            },
             tickvals: PLOT_CONSTANTS.AXES.X.TICKS,
             range: PLOT_CONSTANTS.AXES.X.RANGE,
             gridcolor: PLOT_CONSTANTS.LAYOUT.GRID_COLOR
           },
           yaxis: {
-            title: PLOT_CONSTANTS.AXES.Y.TITLE,
+            title: {
+              text: PLOT_CONSTANTS.AXES.Y.TITLE,
+              font: PLOT_CONSTANTS.AXES.Y.TITLE_FONT
+            },
             range: PLOT_CONSTANTS.AXES.Y.RANGE,
             gridcolor: PLOT_CONSTANTS.LAYOUT.GRID_COLOR,
             autorange: PLOT_CONSTANTS.AXES.Y.AUTORANGE
@@ -43,6 +45,8 @@ const CustomPlot = ({ data }) => {
         style={plotStyles.plot}
         config={{ responsive: true }}
         useResizeHandler={true}
+        onInitialized={onInitialized}
+        onUpdate={onInitialized} 
       />
     </div>
   );
