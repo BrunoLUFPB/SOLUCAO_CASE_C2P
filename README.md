@@ -166,6 +166,12 @@ Desenvolvido com 💙 por **Bruno Luís Silva Guedes**
 
 ---
 
+🛠️ Estrutura Kanban
+Acompanhe o progresso das tarefas no Kanban do GitLab:
+🔗 [GitLab](https://gitlab.com/blsg1/SOLUCAO_CASE_C2P/-/boards/9261175)
+
+---
+
 ### **📝 Licença**
 
 Este projeto está sob a licença MIT.
